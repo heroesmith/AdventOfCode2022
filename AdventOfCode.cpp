@@ -255,10 +255,81 @@ void AdventOfCode::process()
             }
             result.append(QString("%1").arg(score2));
       }
-            break;
+      break;
 
       case 5:
-            break;
+      {
+            // Partie 1
+            QString result1;
+            int firstMoveId = 0;
+            foreach(const QString & line, input) {
+                  firstMoveId++;
+                  if (line.trimmed().isEmpty() == true) {
+                        break;
+                  }
+            }
+            QStringList boxesInput = input.mid(0, firstMoveId - 1);
+            QStringList moves = input.mid(firstMoveId);
+
+            int nbCols = boxesInput.last().split(" ", QString::SkipEmptyParts).count();
+            boxesInput.removeLast();
+
+            QVector<QList<QChar> > boxes;
+            for (int i = 0; i < nbCols; i++) {
+                  boxes.append(QList<QChar>());
+            }
+            int nbLinesBoxes = boxesInput.count();
+            for (int i = nbLinesBoxes - 1; i >= 0; i--) {
+                  QString workLine = boxesInput.at(i);
+                  
+                  for (int j = 0; j < nbCols; j++) {
+                        int letterId = 1 + j * 4;
+                        if (letterId >= workLine.count()) {
+                              break;
+                        }
+                        QChar letter = workLine.at(letterId);
+                        if (letter != ' ') {
+                              boxes[j].append(letter);
+                        }
+                  }
+            }
+
+            foreach(const QString & line, moves) {
+                  QString workLine = line;
+                  workLine.replace("move", "");
+                  workLine.replace("from", "");
+                  workLine.replace("to", "");
+                  workLine = workLine.simplified();
+                  QStringList cut = workLine.split(" ");
+                  int quantity = cut.at(0).toInt();
+                  int from = cut.at(1).toInt();
+                  int to = cut.at(2).toInt();
+
+                  int nbToKeep = boxes.at(from).count() - quantity;
+                  boxes[to].append(boxes.at(from).mid(nbToKeep));
+                  boxes[from] = boxes.at(from).mid(0, nbToKeep);
+
+                  for (int i = 0; i < nbCols; i++) {
+                        QString tempResult;
+                        foreach (const QChar& car, boxes.at(i)) {
+                              tempResult += car;
+                        }
+
+                  }
+            }
+
+            for (int i = 0; i < nbCols; i++) {
+                  result1 += boxes.at(i).last();
+            }
+
+            result.append(QString("%1").arg(result1));
+
+            // Partie 2
+            int score2 = 0;
+
+            result.append(QString("%1").arg(score2));
+      }
+      break;
 
       case 6:
             break;
